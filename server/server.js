@@ -90,9 +90,9 @@ app.patch('/todos/:id',(request, response) => {
     })
 })
 // POST /users
-app.post('/users', (req, res) => {
-    var body = _.pick(req.body, ['email', 'password']);
-    var user = new User(body);
+app.post('/users', (request, res) => {
+    const body = _.pick(request.body, ['email', 'password']);
+    const user = new User(body);
   
     user.save().then(() => {
       return user.generateAuthToken();
@@ -102,7 +102,16 @@ app.post('/users', (req, res) => {
       res.status(400).send(e);
     })
   });
-  
+  app.post('/users/login', (request, response) => {
+    const body = _.pick(request.body, ['email', 'password']);
+    User.findByCredentials(body.email, body.password).then((user) => {
+        return user.generateAuthToken().then((token) => {
+            response.header('x-auth', token).send(user);
+        });
+    }).catch((e) => {
+        response.status(400).send();
+    });
+  })
   app.get('/users/me', authenticate,(request, response) => {
     response.send(request.user);
   });
