@@ -1,8 +1,17 @@
 const {SHA256} = require('crypto-js');
 const jwt = require('jsonwebtoken');
-const validator = require('validator');
-console.log(validator.isEmail('shahargmail.com'));
+const bcrypt = require('bcryptjs');
+const password = '123abc!';
+bcrypt.genSalt (10, (err, salt) => {
+    bcrypt.hash(password, salt, (err, hash) => {
+        console.log(hash);
+    });
+});
 
+const hashPassword = '$2a$10$bLTAS.gGuMl3sL1eII2zVufqQtk50bAlSRNPYniNzQtxTNhLb.SG2';
+bcrypt.compare(password, hashPassword, (err, result) => {
+    console.log(result);
+})
 // let data = {
 //     id:10
 // };
