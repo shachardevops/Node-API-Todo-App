@@ -2,7 +2,7 @@ const _ = require('lodash');
 const express = require('express');
 const bodyParser = require('body-parser');
 const { ObjectID } = require('mongodb');
-
+require('./config/config');
 const { mongoose } = require('./db/mongoose');
 const { Todo } = require('./models/todo');
 const { User } = require('./models/user');
@@ -60,7 +60,7 @@ app.delete('/todos/:id', authenticate,(request, response) => {
     }
     Todo.findOneAndRemove({
         _id:id, 
-        _creator:user._id
+        _creator:request.user._id
     }).then((todo) => {
         if (!todo) {
             return response.status(404).send();
@@ -86,7 +86,7 @@ app.patch('/todos/:id', authenticate,(request, response) => {
     }
     Todo.findOneAndUpdate({
         _id:id,
-        _creator:user._id
+        _creator:request.user._id
     },{$set:body},
     {new: true}
     ).then((todo) => {
