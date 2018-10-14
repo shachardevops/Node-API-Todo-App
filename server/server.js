@@ -89,6 +89,9 @@ app.patch('/todos/:id',(request, response) => {
         response.status(400).send();
     })
 })
+app.get('/users/me', authenticate,(request, response) => {
+        response.send(request.user);
+    });
 // POST /users
 app.post('/users', (request, res) => {
     const body = _.pick(request.body, ['email', 'password']);
@@ -112,9 +115,14 @@ app.post('/users', (request, res) => {
         response.status(400).send();
     });
   })
-  app.get('/users/me', authenticate,(request, response) => {
-    response.send(request.user);
+  app.delete('/users/me/token', authenticate, (req, res) => {
+    req.user.removeToken(req.token).then(() => {
+      res.status(200).send();
+    }, () => {
+      res.status(400).send();
+    });
   });
+  
   app.listen(port, () => {
     console.log(`Started up at port ${port}`);
   });
